@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+__author__ = 'Koralgoll'
+
+import sys
+
+from src.Parser import Parser
+
+def main(argv=sys.argv):
+    parser = Parser()
+
+    # Generate training data
+    lexStr = parser.getLexFromXML("../docs/Teksty/trainPopularnonaukoweIReligijneOprocz00103637XML/")
+    result = parser.parseLex(lexStr)
+    parser.printToFile("../docs/wierzeniaSlowian/train.data", result)
+
+    # Generate testing data
+    lexStr = parser.getLexFromXML("../docs/Teksty/testXML/00103637.xml")
+    result = parser.parseLex(lexStr)
+    parser.printToFile("../docs/wierzeniaSlowian/test.data", result)
+
+
+if __name__ == "__main__":
+    main()

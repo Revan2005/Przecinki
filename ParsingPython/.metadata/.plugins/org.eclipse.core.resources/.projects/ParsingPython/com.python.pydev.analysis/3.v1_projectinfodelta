@@ -1,0 +1,11 @@
+INSTUPsrc.Parser
+/home/tomek/workspace/CRF/Parsing_Python/ParsingPython/src/Parser.py
+INFOS:&&3|1|2|0&&1|3|2|0&&2|4|2|3&&2|5|2|3&&2|6|2|3&&2|7|2|3&&2|8|2|3
+__init__=4
+Parser=3
+printToFile=8
+parseLex=7
+src.Parser=2
+__author__=1
+getLexFromXML=5
+parseLexDefault=6
