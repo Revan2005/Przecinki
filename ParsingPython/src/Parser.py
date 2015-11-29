@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Koralgoll'
 
+import libxml2
+import datetime
 import os
 import codecs
 from xml.etree.ElementTree import ElementTree
@@ -9,6 +11,57 @@ from xml.etree.ElementTree import ElementTree
 class Parser():
     def __init__(self):
         pass
+
+    def xxx(self, fileDirPath):
+        lexStr = u""
+        fileList = []
+
+        fileDirPath = os.path.normpath(fileDirPath)
+
+        for fileName in os.listdir(fileDirPath):
+            if fileName.endswith(".xml"):
+                fileList.append(fileName)
+        # If path leads to actual file
+            else:
+                if fileDirPath.endswith(".xml"):
+                    fileList.append(os.path.basename(fileDirPath))
+                    fileDirPath = os.path.dirname(fileDirPath)
+
+        print("Collecting lexicons...")
+        for fileName in fileList:
+            doc = libxml2.parseFile(fileDirPath +'/' + fileName) 
+            ctxt = doc.xpathNewContext() 
+
+            sentences = ctxt.xpathEval('/chunkList/chunk/sentence') 
+            for sentence in sentences:
+                ctxt.setContextNode(sentence)
+                orths = ctxt.xpathEval('tok')
+                for orth in orths:
+                    ctxt.setContextNode(orth)
+                    orth = ctxt.xpathEval('orth')[0].getContent()
+                    tokens = ctxt.xpathEval('lex[@disamb]')
+                    for token in tokens:
+                        ctxt.setContextNode(token)
+                        base = ctxt.xpathEval('base')[0].getContent()
+                        ctag = ctxt.xpathEval('ctag')[0].getContent()
+                        if 'interp' in ctag:
+                            if not lexStr.endswith(('after')):
+                                if ',' in orth:
+                                    lexStr += 'comma_after'
+                                    break
+                                else:
+                                    lexStr += 'other_after'
+                                    break
+                        else:
+                            if lexStr.endswith(('after')):
+                                lexStr += '\n' + orth.decode('utf-8') + ' ' + base.decode('utf-8') + ' ' + ctag.decode('utf-8') + ' '
+                                break
+                            elif not lexStr.endswith(('\n')):
+                                lexStr += 'nothing' + '\n' + orth.decode('utf-8') + ' ' + base.decode('utf-8') + ' ' + ctag.decode('utf-8') + ' '
+                                break
+                lexStr += "\n"
+        return lexStr
+
 
     def getLexFromXML(self, fileDirPath):
         # If file or directory does not exists
